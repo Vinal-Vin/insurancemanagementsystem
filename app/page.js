@@ -1,11 +1,10 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import Image from "next/image";
+import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   return (
-
     // Make this a Landing Page
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <h1>Welcome to IMS</h1>
@@ -15,5 +14,5 @@ export default function Home() {
     //     <div className=" container mx-auto text-center flex-1">Welcome to IMS</div>
     //   </div>
     // </>
-  )
+  );
 }

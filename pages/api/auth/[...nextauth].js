@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import PrismaClient from "../../../prisma/prismaClient";
+import PrismaClient from "@/prisma/prismaClient";
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -34,7 +34,7 @@ export const authOptions = {
         //     body: JSON.stringify(credentials),
         //     headers: { "Content-Type": "application/json" }
         //   })
-        const user = await prisma.user.findUnique({
+        const user = await PrismaClient.user.findUnique({
           where: {
             email,
           },
@@ -45,6 +45,10 @@ export const authOptions = {
 
         // If no error and we have user data, return it
         if (user) {
+          console.log(
+            "🚀 ~ file: [...nextauth].js:48 ~ authorize ~ user:",
+            user
+          );
           return user;
         }
         // Return null if user data could not be retrieved
@@ -60,6 +64,7 @@ export const authOptions = {
     async session({ session, token, user }) {
       // Send properties to the client, like an access_token from a provider.
       session.user = token;
+      // session.user.role = user.role;
 
       return session;
     },
