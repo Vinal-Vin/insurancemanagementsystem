@@ -1,11 +1,12 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import PrismaClient from "@/prisma/prismaClient";
+import { verifyHash } from "@/lib/utils";
+import db from "@/lib/db";
 
 export const authOptions = {
   // Configure one or more authentication providers
-  adapter: PrismaAdapter(PrismaClient),
+  adapter: PrismaAdapter(db),
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
@@ -23,18 +24,7 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize({ email, password }, req) {
-        // You need to provide your own logic here that takes the credentials
-        // submitted and returns either a object representing a user or value
-        // that is false/null if the credentials are invalid.
-        // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-        // You can also use the `req` object to obtain additional parameters
-        // (i.e., the request IP address)
-        //   const res = await fetch("/your/endpoint", {
-        //     method: 'POST',
-        //     body: JSON.stringify(credentials),
-        //     headers: { "Content-Type": "application/json" }
-        //   })
-        const user = await PrismaClient.user.findUnique({
+        const user = await db.user.findUnique({
           where: {
             email,
           },
@@ -43,13 +33,13 @@ export const authOptions = {
           },
         });
 
-        // If no error and we have user data, return it
         if (user) {
-          console.log(
-            "🚀 ~ file: [...nextauth].js:48 ~ authorize ~ user:",
-            user
-          );
-          return user;
+          const ispasswordCorrect = await verifyHash(password, user.password);
+          console.log("ispasswordCorrect", ispasswordCorrect);
+          if (ispasswordCorrect) {
+            return user;
+          }
+          return null;
         }
         // Return null if user data could not be retrieved
         return null;
@@ -61,13 +51,14 @@ export const authOptions = {
     async jwt({ token, user }) {
       return { ...token, ...user };
     },
-    async session({ session, token, user }) {
-      // Send properties to the client, like an access_token from a provider.
-      session.user = token;
-      // session.user.role = user.role;
+    // async session({ session, token, user }) {
+    //   // Send properties to the client, like an access_token from a provider.
+    //   session.user = token;
+    //   // session.role
+    //   // session.user.role = user.role;
 
-      return session;
-    },
+    //   return session;
+    // },
   },
 };
 export default NextAuth(authOptions);
