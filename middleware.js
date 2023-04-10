@@ -7,19 +7,11 @@ export default withAuth(
 
     if (
       req.nextUrl.pathname.startsWith("/dashboard") &&
-      req.nextauth.token?.role !== "customer"
+      req.nextauth.token?.role.name !== "admin"
     )
       return NextResponse.rewrite(
         new URL("/api/auth/signin?message=You Are Not Authorized!", req.url)
       );
-    // if (
-    //   (req.nextUrl.pathname.startsWith("/user") &&
-    //     req.nextauth.token?.role !== "user") ||
-    //   req.nextauth.token?.role !== "admin"
-    // )
-    //   return NextResponse.rewrite(
-    //     new URL("/api/auth/signin?message=You Are Not Authorized!", req.url)
-    //   );
   },
   {
     callbacks: {

@@ -1,10 +1,6 @@
 import { AuthProvider } from "@/components/AuthProvider";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
-import { authOptions } from "pages/api/auth/[...nextauth]"
-import { getServerSession } from "next-auth";
-
-
 
 export const metadata = {
   title: "Create Next App",
@@ -12,26 +8,23 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  // const session = await getServerSession()
-  // console.log("🚀 ~ file: layout.js:16 ~ RootLayout ~ session:", session)
-
   return (
-    <AuthProvider>
     <html lang="en">
       <body>
-        <div className="flex flex-col">
-          <header>
-            <NavBar />
-          </header>
-          <main className="flex-1 h-screen ">
-            <div className="flex-col items-center justify-between p-24">
-              {children}
-            </div>
-          </main>
-        </div>
+        <AuthProvider refetchInterval={30} refetchOnWindowFocus={true}>
+          <div className="flex flex-col">
+            <header>
+              <NavBar />
+            </header>
+            <main className="flex-1 h-screen ">
+              <div className="flex-col items-center justify-between p-24">
+                {children}
+              </div>
+            </main>
+          </div>
+        </AuthProvider>
+        <div>Hello</div>
       </body>
-      {/* <Footer /> */}
     </html>
-    </AuthProvider>
   );
 }
