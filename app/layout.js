@@ -11,9 +11,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <div className="flex flex-col">
-          <header>
-            <NavBar />
-          </header>
+          <NavBar />
           <main className="flex-1 h-screen ">
             <div className="flex-col items-center justify-between p-24">
               {children}
